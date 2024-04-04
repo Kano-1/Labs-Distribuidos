@@ -53,5 +53,5 @@ func sendRequest(planet, captain string) {
 		return
 	}
 
-	fmt.Printf("Request sent by captain %s for planet %s\n", captain, planet)
+	fmt.Printf("Request sent by captain %s for planet %s\n\n", captain, planet)
 }

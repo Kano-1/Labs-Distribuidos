@@ -1,0 +1,13 @@
+FROM golang:latest
+
+# Set the working directory inside the container
+WORKDIR /Tarea-1
+
+# Copy the Go source code, go.mod, go.sum, and other necessary files into the container
+COPY ClientServer/ClientServer.go .
+
+# Build the Go application
+RUN go build -o ClientServer
+
+# Specify the command to run when the container starts
+CMD ["./ClientServer"]
