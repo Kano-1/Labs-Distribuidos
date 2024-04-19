@@ -20,14 +20,13 @@ Instrucciones de compilación:
 
 ☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆
 
-Comentarios extra:
-    - El código no termina la ejecución, para terminar las ejecuciones se debe presionar Ctrl + C en ambas terminales.
-    - 
-
-    LOVE UUU <3
-
-
+Informe:
     Mientras que esto podría ser una solución implementada para cuando desean, por ejemplo, cubrir distancias demasiado 
     grandes tales que una sola central sería capaz de cubrirla, esto complejisaría el problema en términos de comunicación 
-    sintrópica y consistencia, ya que sería pertinente que ambos "servidores" siempre tuvieran la misma información para 
+    síncrona y consistencia, ya que sería pertinente que ambos "servidores" siempre tuvieran la misma información para 
     evitar errores o inconsistencias en los números de tesoros.
+
+☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆
+
+Comentarios extra:
+    - El código no termina la ejecución, para terminar las ejecuciones se debe presionar Ctrl + C en ambas terminales.
