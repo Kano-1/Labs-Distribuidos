@@ -11,7 +11,7 @@ import (
     pb "equipos/gems_grpc" 
 )
 
-const numEquipos = 5
+const numEquipos = 4
 
 func main() {
     // Seed the random number generator
