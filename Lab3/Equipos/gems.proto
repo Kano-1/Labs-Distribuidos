@@ -1,0 +1,19 @@
+// tierra.proto
+
+syntax = "proto3";
+
+option go_package = "./gems_grpc";
+
+service Tierra {
+    rpc SolicitarM(Solicitud) returns (Respuesta);
+}
+
+message Solicitud {
+    int32 ID = 1;
+    int32 AT = 2;
+    int32 MP = 3;
+}
+
+message Respuesta {
+    bool success = 1;
+}
