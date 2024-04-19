@@ -41,7 +41,7 @@ func main() {
         <-ch
     }
 
-    fmt.Println("All Equipos have finished.")
+    fmt.Println("Todos los Equipos Conquistaron!.")
 }
 
 // EquipoRoutine simulates an Equipo making ammo requests to the Tierra server.
@@ -55,22 +55,21 @@ func EquipoRoutine(id int, client pb.TierraClient, done chan struct{}) {
         MP := int32(rand.Intn(6) + 10)  // Random number between 10 and 15
 
         // Send the ammo request to the Tierra server
-        fmt.Printf("Equipo %d: Solicitando %d AT y %d MP\n", id, AT, MP)
         ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
         defer cancel()
         response, err := client.SolicitarM(ctx, &pb.Solicitud{ID: int32(id), AT: AT, MP: MP})
         if err != nil || !response.Success {
             if err != nil {
-                fmt.Printf("\nEquipo %d: Error: %v\n Reintentando en 3 segs...\n" , id, err)
+                fmt.Printf("\nEquipo %d: Error: %v Reintentando en 3 segs...\n" , id, err)
             } else {
-                fmt.Printf("\nEquipo %d: Resolucion: -- DENEGADA --\n Reintentando en 3 segs...\n", id)
+                fmt.Printf("\nEquipo %d: Solicitando %d AT y %d MP -> Resolucion: -- DENEGADA --\n Reintentando en 3 segs...\n", id, AT, MP)
             }
             time.Sleep(3 * time.Second)
             continue
         }
 
         // Request approved
-        fmt.Printf("\nEquipo %d: Resolucion: -- APROBADA --\n Conquista Exitosa! cerrando comunicacion.\n", id)
+        fmt.Printf("\nEquipo %d:Solicitando %d AT y %d MP -> Resolucion: -- APROBADA --\n Conquista Exitosa! cerrando comunicacion.\n", id, AT,MP)
         break
     }
 
