@@ -1,0 +1,17 @@
+syntax = "proto3";
+package Proto;
+option go_package = "Lab3/Proto";
+
+service servicioMunicion {
+    rpc SolicitarM(solicitarMunicion) returns (respuestaMunicion);
+}
+
+message solicitarMunicion {
+    int32 ID = 1;
+    int32 AT = 2;
+    int32 MP = 3;
+}
+
+message respuestaMunicion {
+    bool success = 1;
+}
