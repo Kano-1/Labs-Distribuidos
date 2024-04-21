@@ -8,7 +8,7 @@ Instrucciones de compilación:
     Esta tarea fue hecha con go 1.22.2.
     Se deben abrir 2 terminales distintas, en la primera terminal se ejecutará el código en Docker de la tierra.
         $ make docker
-    Una vez que se creo el contenedor y se ejecutó, en la segunda terminal se ejecutará el código de los equipos.
+    Una vez que se ejecuta el contenedor, en la segunda terminal se ejecuta el código de los equipos.
         $ make equipo
 
 ☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆
