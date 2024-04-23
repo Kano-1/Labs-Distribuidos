@@ -42,7 +42,7 @@ func main() {
 		<-ch
 	}
 
-	fmt.Println("Todos los Equipos Conquistaron!.")
+	fmt.Println("Todos los Equipos Conquistaron!")
 }
 
 // EquipoRoutine simulates an Equipo making ammo requests to the Tierra server.
