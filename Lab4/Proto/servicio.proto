@@ -1,0 +1,25 @@
+syntax = "proto3";
+package Proto;
+option go_package = "Lab4/Proto";
+
+service comunicacion {
+    rpc solicitarMontoAcumulado(solicitarMonto) returns (entregarMonto);
+}
+
+message solicitarMonto {
+
+}
+
+message entregarMonto {
+    int32 monto = 1;
+}
+
+
+message entregarRegistro {
+
+}
+
+message comunicarDecisiones {
+    string mercenario = "";
+    string decision = "";
+}

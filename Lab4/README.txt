@@ -5,7 +5,7 @@ Integrantes Grupo 16:
 ☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆
 
 Instrucciones de compilación:
-    Esta tarea fue hecha con go 1.22.2.
+    Esta tarea fue hecha con go 1.22.1.
 
 ☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆.。.:*・°☆
 
