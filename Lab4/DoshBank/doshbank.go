@@ -13,7 +13,7 @@ func registrarMuerte(mercenario string, piso int32, monto int32) {
 	}
 	defer archivo.Close()
 
-	_, err = archivo.WriteString(fmt.Sprintf("%s Piso_%d %d\n", mercenario, piso, monto))
+	_, err = archivo.WriteString(fmt.Sprintf("- %s Piso_%d %d\n", mercenario, piso, monto))
 	if err != nil {
 		fmt.Println("Error al escribir en el archivo:", err)
 		return
