@@ -2,24 +2,21 @@ syntax = "proto3";
 package Proto;
 option go_package = "Lab4/Proto";
 
-service comunicacion {
-    rpc solicitarMontoAcumulado(solicitarMonto) returns (entregarMonto);
+
+service servicioMercenarios {
+    rpc enviarDecisiones(comunicarDecision) returns (respuestaSobrevivencia);
+    rpc verMontoAcumulado(solicitarMonto) returns (entregarMonto);
 }
 
-message solicitarMonto {
+service servicioDoshBank
 
+
+
+message comunicarDecision {
+    string mercenario = 1;
+    repeated string decisiones = 2;
 }
 
-message entregarMonto {
-    int32 monto = 1;
-}
-
-
-message entregarRegistro {
-
-}
-
-message comunicarDecisiones {
-    string mercenario = "";
-    string decision = "";
+message respuestaExito {
+    bool exito = 1;
 }

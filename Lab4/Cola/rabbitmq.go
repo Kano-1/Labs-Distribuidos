@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/streadway/amqp"
 )
 
-// ni idea si esto esta bien, esta copiado del ejemplo y el lab de la sofi xd
+// Conectado a la 3era máquina virtual
+const rabbitMQURL = "amqp://guest:guest@dist063.inf.santiago.usm.cl:5672/"
 
 func main() {
-	// conectado a la máquina virtual 3
-	conn, err := amqp.Dial("amqp://guest:guest@dist063.inf.santiago.usm.cl:5672/")
+	conn, err := amqp.Dial(rabbitMQURL)
 
 	if err != nil {
 		fmt.Println("Failed to connect to RabbitMQ:", err)
@@ -20,6 +20,7 @@ func main() {
 	ch, err := conn.Channel()
 	if err != nil {
 		fmt.Println("Failed to open a channel:", err)
+		panic(err)
 	}
 
 	defer ch.Close()
@@ -34,6 +35,7 @@ func main() {
 	)
 	if err != nil {
 		fmt.Println("Failed to declare a queue:", err)
+		panic(err)
 	}
 
 	fmt.Println(q)

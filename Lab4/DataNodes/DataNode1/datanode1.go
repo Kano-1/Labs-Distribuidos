@@ -6,6 +6,12 @@ import (
 	"os"
 )
 
+func main() {
+	/*
+	   conexión con grpc
+	*/
+}
+
 func crearRegistro(mercenario string, piso int32, decisiones []string) {
 	archivo, err := os.Create(fmt.Sprintf("%s_%d.txt", mercenario, piso))
 	if err != nil {
@@ -42,10 +48,4 @@ func enviarRegistro(mercenario string, piso int32) {
 		return
 	}
 	// envía de vuelta el string decisiones
-}
-
-func main() {
-	/*
-	   conexión con grpc
-	*/
 }
