@@ -4,19 +4,33 @@ option go_package = "Lab4/Proto";
 
 
 service servicioMercenarios {
-    rpc enviarDecisiones(comunicarDecision) returns (respuestaSobrevivencia);
+    rpc enviarDecisiones(comunicarDecision) returns (respuestaExito);
     rpc verMontoAcumulado(solicitarMonto) returns (entregarMonto);
+    rpc comenzarPiso(enviarEstado) returns (confirmarInicio);
 }
-
-service servicioDoshBank
-
-
 
 message comunicarDecision {
     string mercenario = 1;
     repeated string decisiones = 2;
+    int32 piso = 3;
 }
 
 message respuestaExito {
     bool exito = 1;
+}
+
+message solicitarMonto {
+    string mercenario = 1;
+}
+
+message entregarMonto {
+    int32 monto = 1;
+}
+
+message enviarEstado {
+    string mercenario = 1;
+}
+
+message confirmarInicio {
+    bool inicio = 1;
 }

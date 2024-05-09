@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
@@ -28,7 +29,7 @@ func main() {
 
 	conn, err := grpc.Dial(DIRECTOR, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("No se pudo conectar: %v", err)
+		log.Fatalf("Failed to connect: %v", err)
 	}
 	defer conn.Close()
 	// cambiar con el nombre que quede en el proto
@@ -40,16 +41,16 @@ func main() {
 		go func(mercenario string) {
 			defer wg.Done()
 			if mercenarioEnConsola(mercenario) {
-				misionesMercenarioConsola(client, mercenario)
+				misionesMercenarioConsola(mercenario, client)
 			} else {
-				misionesMercenarioBot(client, mercenario)
+				misionesMercenarioBot(mercenario, client)
 			}
 		}(mercenario)
 	}
 	wg.Wait()
 }
 
-func misionesMercenarioConsola(mercenario string, client pb.MercenaryServiceClient) {
+func misionesMercenarioConsola(mercenario string, client pb.ServicioMercenariosClient) {
 	scanner := bufio.NewScanner(os.Stdin)
 	var decision string
 	for piso := 1; piso <= 3; piso++ {
@@ -95,16 +96,21 @@ func misionesMercenarioConsola(mercenario string, client pb.MercenaryServiceClie
 			}
 		}
 
-		// enviarDecision debería ser una funcion que le envie la decision al director y retorne si sobrevive o no
-		if !enviarDecision(client, mercenario, piso, decisiones) {
+		respuesta, err := client.EnviarDecisiones(context.Background(), &pb.ComunicarDecision{Mercenario: mercenario, Decisiones: decisiones, Piso: piso})
+		if err != nil {
+			fmt.Println("Failed to send message:", err)
+		}
+		if !respuesta.Exito {
 			// idk el mensaje que debería ser
-			fmt.Printf("[%s] Fin del juego, moriste en el piso %d.\n", mercenario, piso)
-			break
+			fmt.Println(fmt.Sprintf("[%s] Fin del juego, moriste en el piso %d.", mercenario, piso))
+			return
 		}
 	}
+	// Si llega acá es porque ganó
+	fmt.Println(fmt.Sprintf("[%s] Felicidades, llegaste al final de la misión!", mercenario))
 }
 
-func misionesMercenarioBot(mercenario string, client pb.MercenaryServiceClient) {
+func misionesMercenarioBot(mercenario string, client pb.ServicioMercenariosClient) {
 	var decision string
 
 	for piso := 1; piso <= 3; piso++ {
@@ -127,10 +133,13 @@ func misionesMercenarioBot(mercenario string, client pb.MercenaryServiceClient) 
 			}
 		}
 
-		// enviarDecision debería ser una funcion que le envie la decision al director y retorne si sobrevive o no
-		if !enviarDecision(client, mercenario, piso, decisiones) {
+		respuesta, err := client.EnviarDecisiones(context.Background(), &pb.ComunicarDecision{Mercenario: mercenario, Decisiones: decisiones, Piso: piso})
+		if err != nil {
+			fmt.Println("Failed to send message:", err)
+		}
+		if !respuesta.Exito {
 			// idk el mensaje que debería ser
-			log.Printf("[%s] Fin del juego, moriste en el piso %d.\n", mercenario, piso)
+			log.Println(fmt.Sprintf("[%s] Fin del juego, moriste en el piso %d.", mercenario, piso))
 			return
 		}
 	}
