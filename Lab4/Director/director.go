@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 
+	pb "Lab4/Proto"
+
 	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 )

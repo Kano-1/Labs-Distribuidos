@@ -2,7 +2,6 @@ syntax = "proto3";
 package Proto;
 option go_package = "Lab4/Proto";
 
-
 service servicioMercenarios {
     rpc enviarDecisiones(comunicarDecision) returns (respuestaExito);
     rpc verMontoAcumulado(solicitarMonto) returns (entregarMonto);

@@ -7,17 +7,22 @@ import (
 	"strings"
 )
 
+var DATANODES = []string{"amqp://guest:guest@dist061.inf.santiago.usm.cl:5672/",
+	"amqp://guest:guest@dist062.inf.santiago.usm.cl:5672/",
+	"amqp://guest:guest@dist064.inf.santiago.usm.cl:5672/"}
+
 func direccionesRegistros(mercenario string, piso int32, datanode string) {
+	// Agrega la
 	archivo, err := os.OpenFile("direcciones.txt", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		fmt.Println("Error al abrir el archivo:", err)
+		fmt.Println("Failed to open file:", err)
 		return
 	}
 	defer archivo.Close()
 
 	_, err = archivo.WriteString(fmt.Sprintf("- %s Piso_%d %s\n", mercenario, piso, datanode))
 	if err != nil {
-		fmt.Println("Error al escribir en el archivo:", err)
+		fmt.Println("Failed to write in file:", err)
 		return
 	}
 }
@@ -32,7 +37,7 @@ func obtenerRegistro(mercenario string) {
 	*/
 	archivo, err := os.Open("direcciones.txt")
 	if err != nil {
-		fmt.Println("Error al abrir el archivo:", err)
+		fmt.Println("Failed to open file:", err)
 		return
 	}
 	defer archivo.Close()
