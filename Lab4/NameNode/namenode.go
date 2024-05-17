@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-var DATANODES = []string{"amqp://guest:guest@dist061.inf.santiago.usm.cl:5672/",
-	"amqp://guest:guest@dist062.inf.santiago.usm.cl:5672/",
-	"amqp://guest:guest@dist064.inf.santiago.usm.cl:5672/"}
-
 func direccionesRegistros(mercenario string, piso int32, datanode string) {
 	// Agrega la
 	archivo, err := os.OpenFile("direcciones.txt", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
@@ -44,15 +40,22 @@ func obtenerRegistro(mercenario string) {
 
 	escaner := bufio.NewScanner(archivo)
 	var direccion string
+	// string que se va a enviar de vuelta al director con todas las decisiones
 	var decisiones string
 
+	// por cada línea
 	for escaner.Scan() {
 		direccion = escaner.Text()
+		// si está el mercenario en esa línea
 		if strings.Contains(direccion, mercenario) {
 			palabras := strings.Split(direccion, " ")
+			// quedaría dividido como ["-", "Piso_n", "datanode"]
 			decisiones += palabras[1] + "\n"
-			// datanode := palabras[2]
-			// ahora le pido al datanode que me de el string y lo sumo
+			/*
+				datanode := palabras[2]
+				// ahora le pido al datanode que me de el string y lo sumo
+
+			*/
 		}
 	}
 }
