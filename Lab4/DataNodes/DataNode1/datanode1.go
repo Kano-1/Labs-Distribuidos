@@ -11,8 +11,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-var NAMENODE = "amqp://guest:guest@dist063.inf.santiago.usm.cl:5672/"
-
 func main() {
 	conn, err := grpc.Dial(NAMENODE, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
