@@ -3,83 +3,153 @@ package main
 import (
 	"context"
 	"fmt"
-	"math/rand"
-	"net"
+	"log"
+	"sync"
 
 	pb "Lab4/Proto"
 
-	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 )
 
-// Conectado a la 3era máquina virtual
-const rabbitMQURL = "amqp://guest:guest@dist063.inf.santiago.usm.cl:5672/"
+type Director struct {
+	mercenaries     map[string]*pb.MercenaryStatus
+	doshBankAddress string
+	mu              sync.Mutex
+}
 
-type ServicioMercenariosServer struct {
-	pb.UnimplementedServicioMercenariosServer
+func NewDirector(doshBankAddress string) *Director {
+	return &Director{
+		mercenaries:     make(map[string]*pb.MercenaryStatus),
+		doshBankAddress: doshBankAddress,
+	}
+}
+
+func (d *Director) StartFloor(floor int) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	ready := true
+	for _, status := range d.mercenaries {
+		if !status.Ready {
+			ready = false
+			break
+		}
+	}
+
+	if ready {
+		fmt.Printf("Starting floor %d\n", floor)
+		// Notify all mercenaries about the floor start
+		for name, status := range d.mercenaries {
+			if status.Alive {
+				// Send floor information to mercenaries
+				conn, err := grpc.Dial(status.Address, grpc.WithInsecure())
+				if err != nil {
+					log.Printf("Failed to connect to mercenary %s: %v\n", name, err)
+					continue
+				}
+				client := pb.NewMercenaryClient(conn)
+				_, err = client.StartFloor(context.Background(), &pb.FloorInfo{Floor: int32(floor)})
+				if err != nil {
+					log.Printf("Failed to start floor for mercenary %s: %v\n", name, err)
+				}
+				conn.Close()
+			}
+		}
+	} else {
+		fmt.Println("Not all mercenaries are ready to start the floor")
+	}
+}
+
+func (d *Director) ReportDeath(name string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if status, exists := d.mercenaries[name]; exists {
+		status.Alive = false
+		fmt.Printf("Mercenary %s has died\n", name)
+		// Notify DoshBank (using RabbitMQ, to be implemented)
+	}
+}
+
+func (d *Director) ReportMove(name string, move *pb.Move) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if status, exists := d.mercenaries[name]; exists && status.Alive {
+		// Logic to handle the move and update the game state
+		fmt.Printf("Mercenary %s made a move: %v\n", name, move)
+
+		// For example, if move leads to death
+		if move.LeadsToDeath {
+			d.ReportDeath(name)
+		}
+	}
+}
+
+func (d *Director) CheckStatus() {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	aliveCount := 0
+	for _, status := range d.mercenaries {
+		if status.Alive {
+			aliveCount++
+			fmt.Printf("Mercenary %s is alive\n", status.Name)
+		}
+	}
+
+	fmt.Printf("%d mercenaries are alive at the end of the floor\n", aliveCount)
+}
+
+func (d *Director) AddMercenary(name, address string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	d.mercenaries[name] = &pb.MercenaryStatus{
+		Name:    name,
+		Address: address,
+		Alive:   true,
+		Ready:   false,
+	}
+}
+
+func (d *Director) RequestAccumulatedAmount() {
+	conn, err := grpc.Dial(d.doshBankAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Printf("Failed to connect to DoshBank: %v\n", err)
+		return
+	}
+	defer conn.Close()
+
+	client := pb.NewDoshBankClient(conn)
+	response, err := client.GetAccumulatedAmount(context.Background(), &pb.Empty{})
+	if err != nil {
+		log.Printf("Failed to get accumulated amount: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Accumulated amount: %d\n", response.Amount)
 }
 
 func main() {
-	rabbit_conn, rabbit_err := amqp.Dial(rabbitMQURL)
+	director := NewDirector("localhost:50053") // Address of DoshBank service
 
-	if rabbit_err != nil {
-		fmt.Println("Failed to connect to RabbitMQ:", rabbit_err)
-	}
+	// Simulating mercenary addition
+	director.AddMercenary("Mercenary1", "localhost:50051")
+	director.AddMercenary("Mercenary2", "localhost:50052")
 
-	ch, rabbit_err := rabbit_conn.Channel()
-	if rabbit_err != nil {
-		fmt.Println("Failed to open a channel:", rabbit_err)
-	}
+	// Example usage
+	director.StartFloor(1)
 
-	defer ch.Close()
+	// Simulating mercenary moves
+	move := &pb.Move{Action: "MoveForward", LeadsToDeath: false}
+	director.ReportMove("Mercenary1", move)
 
-	grpc_lis, grpc_err := net.Listen("tcp", ":50051")
-	if grpc_err != nil {
-		fmt.Println("Failed to listen:", grpc_err)
-	}
-	server := grpc.NewServer()
-	servicioMercenariosServer := &ServicioMercenariosServer{}
-	pb.RegisterServicioMercenariosServer(server, servicioMercenariosServer)
-}
+	move = &pb.Move{Action: "EnterRoom", LeadsToDeath: true}
+	director.ReportMove("Mercenary2", move)
 
-func (s *ServicioMercenariosServer) EnviarDecisiones(ctx context.Context, req *pb.ComunicarDecision) (*pb.RespuestaExito, error) {
-}
+	director.CheckStatus()
 
-func logicaPisos(piso int) {
-	switch piso {
-	case 1:
-		// escoger las probabilidades
-		probabilidad := rand.Intn(101)
-		x := rand.Intn(101)
-		y := rand.Intn(101-x) + x + 1
-		decision := 0
-		switch decision {
-		case 0:
-			// escogio escopeta
-			if probabilidad >= 0 && probabilidad <= x {
-				// sobrevive
-			} else {
-				// muere
-			}
-		case 1:
-			// escogio rifle
-			if probabilidad >= x && probabilidad <= y {
-				// sobrevive
-			} else {
-				// muere
-			}
-		case 2:
-			// escogio puños
-			if probabilidad >= y && probabilidad <= 100 {
-				// sobrevive
-			} else {
-				// muere
-			}
-		}
-	case 2:
-		// escoger a o b
-	case 3:
-		// escoger los 5 números
-	}
-
+	// Request accumulated amount from DoshBank
+	director.RequestAccumulatedAmount()
 }
