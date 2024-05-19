@@ -1,0 +1,21 @@
+# El nombre del archivo lo arreglas para el archivo correspondiente
+
+FROM golang:latest
+
+WORKDIR /Lab4
+
+# Aca cambias por el archivo que necesites
+COPY DataNodes/DataNode3/datanode3.go . 
+
+COPY go.mod .
+COPY go.sum .
+COPY Proto/ Proto/
+
+RUN go mod tidy
+# Aca escribes el archivo que necesites
+RUN go build -o DataNode3 datanode3.go
+
+EXPOSE 50054
+
+# Again aca pones exactamente el mismo nombre de arriba
+CMD ["./DataNode3"]

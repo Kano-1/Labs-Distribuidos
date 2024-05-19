@@ -137,6 +137,7 @@ func main() {
 	time.Sleep(2 * time.Second) // Wait for the server to start
 
 	conn, err := grpc.Dial("dist063.inf.santiago.usm.cl:50051", grpc.WithInsecure())
+	// conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

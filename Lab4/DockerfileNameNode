@@ -5,7 +5,7 @@ FROM golang:latest
 WORKDIR /Lab4
 
 # Aca cambias por el archivo que necesites
-COPY Director/Director.go . 
+COPY NameNode/namenode.go . 
 
 COPY go.mod .
 COPY go.sum .
@@ -13,7 +13,9 @@ COPY Proto/ Proto/
 
 RUN go mod tidy
 # Aca escribes el archivo que necesites
-RUN go build -o Director
+RUN go build -o NameNode namenode.go
+
+EXPOSE 50051
 
 # Again aca pones exactamente el mismo nombre de arriba
-CMD ["./Director"]
+CMD ["./NameNode"]
