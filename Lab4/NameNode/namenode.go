@@ -23,8 +23,8 @@ var dataNodeAddresses = []string{
 	// "localhost:50052",
 	// "localhost:50053",
 	// "localhost:50054",
-	"dist061.inf.santiago.usm.cl:50054",
-	"dist062.inf.santiago.usm.cl:50053",
+	"dist062.inf.santiago.usm.cl:50054",
+	"dist063.inf.santiago.usm.cl:50053",
 	"dist064.inf.santiago.usm.cl:50054",
 }
 
@@ -136,7 +136,7 @@ func main() {
 	// Simulate test cases
 	time.Sleep(2 * time.Second) // Wait for the server to start
 
-	conn, err := grpc.Dial("dist063.inf.santiago.usm.cl:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist061.inf.santiago.usm.cl:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
