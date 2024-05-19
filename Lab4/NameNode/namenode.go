@@ -148,6 +148,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 2, Decisions: []string{"MoveForward", "Attack"}})
+	if err != nil {
+		log.Fatalf("could not send decision: %v", err)
+	}
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 3, Decisions: []string{"MoveForward", "Attack"}})
+	if err != nil {
+		log.Fatalf("could not send decision: %v", err)
+	}
 
 	// Wait for some time to ensure the decision is processed
 	time.Sleep(5 * time.Second)
