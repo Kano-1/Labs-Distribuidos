@@ -1,0 +1,19 @@
+# El nombre del archivo lo arreglas para el archivo correspondiente
+
+FROM golang:latest
+
+WORKDIR /Lab4
+
+# Aca cambias por el archivo que necesites
+COPY Director/Director.go . 
+
+COPY go.mod .
+COPY go.sum .
+COPY Proto/ Proto/
+
+RUN go mod tidy
+# Aca escribes el archivo que necesites
+RUN go build -o Director
+
+# Again aca pones exactamente el mismo nombre de arriba
+CMD ["./Director"]
