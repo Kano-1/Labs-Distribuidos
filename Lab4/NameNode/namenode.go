@@ -144,15 +144,15 @@ func main() {
 	client := pb.NewNameNodeClient(conn)
 
 	// Test: SendDecision
-	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 1, Decisions: []string{"MoveForward", "Attack"}})
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 1, Decisions: []string{"Puños electricos"}})
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
-	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 2, Decisions: []string{"MoveForward", "Attack"}})
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 2, Decisions: []string{"Pasillo A"}})
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
-	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 3, Decisions: []string{"MoveForward", "Attack"}})
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 3, Decisions: []string{"2", "4", "15", "7", "10"}})
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
