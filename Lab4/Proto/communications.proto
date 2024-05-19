@@ -60,3 +60,34 @@ message AccumulatedAmountResponse { // Added for DoshBank
 
 message Empty {}
 
+
+// NameNode and DataNodes
+service NameNode {
+  rpc SendDecision(Decision) returns (Response);
+  rpc GetDecisions(MercenaryRequest) returns (DecisionsResponse);
+  rpc StoreDecision(Decision) returns (Response);
+  rpc RetrieveDecisions(MercenaryFloorRequest) returns (DecisionsResponse);
+}
+
+message Decision {
+  string mercenary = 1;
+  int32 floor = 2;
+  repeated string decisions = 3;
+}
+
+message MercenaryRequest {
+  string mercenary = 1;
+}
+
+message MercenaryFloorRequest {
+  string mercenary = 1;
+  int32 floor = 2;
+}
+
+message Response {
+  string message = 1;
+}
+
+message DecisionsResponse {
+  repeated string decisions = 1;
+}

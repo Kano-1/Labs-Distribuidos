@@ -472,3 +472,204 @@ var DoshBank_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "Proto/communications.proto",
 }
+
+const (
+	NameNode_SendDecision_FullMethodName      = "/Proto.NameNode/SendDecision"
+	NameNode_GetDecisions_FullMethodName      = "/Proto.NameNode/GetDecisions"
+	NameNode_StoreDecision_FullMethodName     = "/Proto.NameNode/StoreDecision"
+	NameNode_RetrieveDecisions_FullMethodName = "/Proto.NameNode/RetrieveDecisions"
+)
+
+// NameNodeClient is the client API for NameNode service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type NameNodeClient interface {
+	SendDecision(ctx context.Context, in *Decision, opts ...grpc.CallOption) (*Response, error)
+	GetDecisions(ctx context.Context, in *MercenaryRequest, opts ...grpc.CallOption) (*DecisionsResponse, error)
+	StoreDecision(ctx context.Context, in *Decision, opts ...grpc.CallOption) (*Response, error)
+	RetrieveDecisions(ctx context.Context, in *MercenaryFloorRequest, opts ...grpc.CallOption) (*DecisionsResponse, error)
+}
+
+type nameNodeClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewNameNodeClient(cc grpc.ClientConnInterface) NameNodeClient {
+	return &nameNodeClient{cc}
+}
+
+func (c *nameNodeClient) SendDecision(ctx context.Context, in *Decision, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, NameNode_SendDecision_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nameNodeClient) GetDecisions(ctx context.Context, in *MercenaryRequest, opts ...grpc.CallOption) (*DecisionsResponse, error) {
+	out := new(DecisionsResponse)
+	err := c.cc.Invoke(ctx, NameNode_GetDecisions_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nameNodeClient) StoreDecision(ctx context.Context, in *Decision, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, NameNode_StoreDecision_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nameNodeClient) RetrieveDecisions(ctx context.Context, in *MercenaryFloorRequest, opts ...grpc.CallOption) (*DecisionsResponse, error) {
+	out := new(DecisionsResponse)
+	err := c.cc.Invoke(ctx, NameNode_RetrieveDecisions_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// NameNodeServer is the server API for NameNode service.
+// All implementations must embed UnimplementedNameNodeServer
+// for forward compatibility
+type NameNodeServer interface {
+	SendDecision(context.Context, *Decision) (*Response, error)
+	GetDecisions(context.Context, *MercenaryRequest) (*DecisionsResponse, error)
+	StoreDecision(context.Context, *Decision) (*Response, error)
+	RetrieveDecisions(context.Context, *MercenaryFloorRequest) (*DecisionsResponse, error)
+	mustEmbedUnimplementedNameNodeServer()
+}
+
+// UnimplementedNameNodeServer must be embedded to have forward compatible implementations.
+type UnimplementedNameNodeServer struct {
+}
+
+func (UnimplementedNameNodeServer) SendDecision(context.Context, *Decision) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendDecision not implemented")
+}
+func (UnimplementedNameNodeServer) GetDecisions(context.Context, *MercenaryRequest) (*DecisionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDecisions not implemented")
+}
+func (UnimplementedNameNodeServer) StoreDecision(context.Context, *Decision) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StoreDecision not implemented")
+}
+func (UnimplementedNameNodeServer) RetrieveDecisions(context.Context, *MercenaryFloorRequest) (*DecisionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RetrieveDecisions not implemented")
+}
+func (UnimplementedNameNodeServer) mustEmbedUnimplementedNameNodeServer() {}
+
+// UnsafeNameNodeServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NameNodeServer will
+// result in compilation errors.
+type UnsafeNameNodeServer interface {
+	mustEmbedUnimplementedNameNodeServer()
+}
+
+func RegisterNameNodeServer(s grpc.ServiceRegistrar, srv NameNodeServer) {
+	s.RegisterService(&NameNode_ServiceDesc, srv)
+}
+
+func _NameNode_SendDecision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Decision)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NameNodeServer).SendDecision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NameNode_SendDecision_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NameNodeServer).SendDecision(ctx, req.(*Decision))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NameNode_GetDecisions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MercenaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NameNodeServer).GetDecisions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NameNode_GetDecisions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NameNodeServer).GetDecisions(ctx, req.(*MercenaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NameNode_StoreDecision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Decision)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NameNodeServer).StoreDecision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NameNode_StoreDecision_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NameNodeServer).StoreDecision(ctx, req.(*Decision))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NameNode_RetrieveDecisions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MercenaryFloorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NameNodeServer).RetrieveDecisions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NameNode_RetrieveDecisions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NameNodeServer).RetrieveDecisions(ctx, req.(*MercenaryFloorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// NameNode_ServiceDesc is the grpc.ServiceDesc for NameNode service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var NameNode_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Proto.NameNode",
+	HandlerType: (*NameNodeServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SendDecision",
+			Handler:    _NameNode_SendDecision_Handler,
+		},
+		{
+			MethodName: "GetDecisions",
+			Handler:    _NameNode_GetDecisions_Handler,
+		},
+		{
+			MethodName: "StoreDecision",
+			Handler:    _NameNode_StoreDecision_Handler,
+		},
+		{
+			MethodName: "RetrieveDecisions",
+			Handler:    _NameNode_RetrieveDecisions_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "Proto/communications.proto",
+}
