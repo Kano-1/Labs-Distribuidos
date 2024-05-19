@@ -23,8 +23,8 @@ var dataNodeAddresses = []string{
 	// "localhost:50052",
 	// "localhost:50053",
 	// "localhost:50054",
-	"dist062.inf.santiago.usm.cl:50054",
-	"dist063.inf.santiago.usm.cl:50053",
+	"dist061.inf.santiago.usm.cl:50054",
+	"dist062.inf.santiago.usm.cl:50053",
 	"dist064.inf.santiago.usm.cl:50054",
 }
 
@@ -136,7 +136,7 @@ func main() {
 	// Simulate test cases
 	time.Sleep(2 * time.Second) // Wait for the server to start
 
-	conn, err := grpc.Dial("dist061.inf.santiago.usm.cl:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist063.inf.santiago.usm.cl:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -144,7 +144,7 @@ func main() {
 	client := pb.NewNameNodeClient(conn)
 
 	// Test: SendDecision
-	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 1, Decisions: []string{"Puños electricos"}})
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 1, Decisions: []string{"Escopeta"}})
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
@@ -152,7 +152,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
-	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 3, Decisions: []string{"2", "4", "15", "7", "10"}})
+	_, err = client.SendDecision(context.Background(), &pb.Decision{Mercenary: "Merc1", Floor: 3, Decisions: []string{"1", "2", "3", "4", "5"}})
 	if err != nil {
 		log.Fatalf("could not send decision: %v", err)
 	}
