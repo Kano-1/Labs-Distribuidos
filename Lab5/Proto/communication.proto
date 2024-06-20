@@ -1,0 +1,41 @@
+syntax = "proto3";
+package Proto;
+option go_package = "Lab5/Proto";
+
+// Broker - Ingenieros/Comandante
+service Broker {
+    rpc GetServerAddress(Empty) returns (ServerAddress);
+}
+
+// Servidores - Ingenieros/Comandante
+service Servers {
+    rpc WriteInfo(ActionRequest) returns (ClockResponse);
+    rpc ReadInfo(ReadRequest) returns (EnemiesResponse);
+}
+
+message Empty {}
+
+message ServerAddress {
+    string address = 1;
+}
+
+message ActionRequest {
+    string action = 1;
+    string sector = 2;
+    string base = 3;
+    int32 value = 4;
+}
+
+message ClockResponse {
+    repeated int32 clock = 1;
+}
+
+message ReadRequest {
+    string sector = 1;
+    string base = 2;
+}
+
+message EnemiesResponse {
+    int32 enemies = 1;
+    repeated int32 clock = 2;
+}
