@@ -1,0 +1,72 @@
+# Cosas que hacer (•ˋ⌒ˊ•)
+**Las acciones de los ingenieros y el comandante es por consola ?**
+
+## Servidores Fulcrum
+- [ ] Almacenar registro de los soldados enemigos en un sector en un archivo txt
+    - Escribe una línea por cada base en el sector, ej: "SectorAlpha Campamento1 15"
+    - Si no hay un archivo para el sector se tiene que crear
+- [ ] Actualizar el reloj de vector con la cantidad de cambios hechos
+- [ ] Tener un log de registros de los cambios que se han hecho
+    - Ej: AgregarBase SectorAlpha Campamento2 13
+    - Cuando se propagaron los cambios entre los servidores tienen que ser **borrados y creados** de nuevo ?
+- [ ] Propagar los cambios cada 30 segundos
+    - [ ] Realizar ***Merge*** si hay inconsistencias 
+
+## Broker
+- [ ] Escoger un servidor al azar para el ingeniero haga sus cambios en él
+- [ ] Escoger un servidor al azar para el comandante cuando quiera consultar información
+- [ ] Manejar las inconsistencias
+    - Si el ingeniero detecta una, el broker debe decidir cuál es el mejor servidor que puede ayudar al ingeniero ?
+
+## Ingenieros
+- [ ] Hacer los cambios en los servidores
+    - [ ] Agregar una base a un sector
+    - [ ] Renombrar una base de un sector
+    - [ ] Actualizar el valor de enemigos en una base
+    - [ ] Borrar una base de un sector
+- [ ] Utilizar ***Read your writes*** para llevar a cabo la consistencia
+    - Pueden guardar información en memoria
+    - Revisan si hay inconsistencias con esto
+
+## Comandante
+- [ ] Consultar la información de los servidores
+    - [ ] Obtener la cantidad de enemigos en una base
+        - Incluye el reloj de vector del servidor
+- [ ] Utilizar ***Monotonic reads*** para mantener la consistencia
+    - Pueden guardar información en memoria
+    - También revisa si hay inconsistencias
+
+## Consistencia eventual - Merge
+- [ ] Definir un nodo dominante, el que esté mas actualizado
+- [ ] Comparar las operaciones con los logs de los servidores para aplicar los cambios del nodo dominante
+- [ ] Actualizar los relojes de vectores
+    - Ej: [1, 0, 0], [0, 1, 0] y [0, 0, 0] donde todos pasan a ser [1, 1, 0]
+- [ ] Utilizar método de resolución libre para casos particulares ?
+    - [ ] Especificar en el README
+- El objetivo es que al finalizar el proceso no existan diferencias entre los 3 servidores
+    - Como es ***consitencia eventual*** da lo mismo que se "pierda" información
+
+## Mensajes gRPC
+**No sé si eso sería todo y como funciona bien lo de las inconsistencias :<**
+- [ ] Petición escribir información (ingeniero - broker)
+- [ ] Escribir información (ingeniero - servidor)
+- [ ] Informar inconsistencia (ingeniero - broker)
+- [ ] Entregar dirección servidor (broker - ingeniero)
+---
+- [ ] Informar inconsistencia (servidor - broker) ?
+- [ ] Propagar cambios (servidor - servidor)
+---
+- [ ] Petición obtener información (comandante - broker)
+- [ ] Consultar información (comandante - servidor)
+- [ ] Entregar dirección servidor (broker - comandante)
+- [ ] Entregar información (servidor - comandante)
+
+## Separación máquinas
+- 3 servidores en máquinas distintas
+- Broker en una máquina distinta a los servidores
+- Comandante, dos ingenieros y broker en máquinas distintas
+- Posible distribución:
+    - Máquina 1 (061): Comandante Kais, Servidor Fulcrum 1
+    - Máquina 2 (062): Ingeniero Jeth, Servidor Fulcrum 2
+    - Máquina 3 (063): Ingeniero Malkor, Servidor Fulcrum 3
+    - Máquina 4 (064): Broker
