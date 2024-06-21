@@ -1,14 +1,14 @@
 # Cosas que hacer (•ˋ⌒ˊ•)
-**Las acciones de los ingenieros y el comandante es por consola ?**
 
 ## Servidores Fulcrum
-- [ ] Almacenar registro de los soldados enemigos en un sector en un archivo txt
+- [x] Almacenar registro de los soldados enemigos en un sector en un archivo txt
     - Escribe una línea por cada base en el sector, ej: "SectorAlpha Campamento1 15"
     - Si no hay un archivo para el sector se tiene que crear
-- [ ] Actualizar el reloj de vector con la cantidad de cambios hechos
-- [ ] Tener un log de registros de los cambios que se han hecho
+- [x] Actualizar el reloj de vector con la cantidad de cambios hechos
+- [x] Tener un log de registros de los cambios que se han hecho
     - Ej: AgregarBase SectorAlpha Campamento2 13
     - Cuando se propagaron los cambios entre los servidores tienen que ser **borrados y creados** de nuevo ?
+- Técnicamente si está implementado todo eso, falta el que reciba la información con gRPC
 - [ ] Propagar los cambios cada 30 segundos
     - [ ] Realizar ***Merge*** si hay inconsistencias 
 
@@ -19,11 +19,12 @@
     - Si el ingeniero detecta una, el broker debe decidir cuál es el mejor servidor que puede ayudar al ingeniero ?
 
 ## Ingenieros
-- [ ] Hacer los cambios en los servidores
-    - [ ] Agregar una base a un sector
-    - [ ] Renombrar una base de un sector
-    - [ ] Actualizar el valor de enemigos en una base
-    - [ ] Borrar una base de un sector
+- [x] Preguntar por consola los cambios en los servidores
+    - [x] Agregar una base a un sector
+    - [x] Renombrar una base de un sector
+    - [x] Actualizar el valor de enemigos en una base
+    - [x] Borrar una base de un sector
+- Falta unirlo con gRPC
 - [ ] Utilizar ***Read your writes*** para llevar a cabo la consistencia
     - Pueden guardar información en memoria
     - Revisan si hay inconsistencias con esto

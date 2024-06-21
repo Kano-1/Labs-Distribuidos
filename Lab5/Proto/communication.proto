@@ -7,10 +7,13 @@ service Broker {
     rpc GetServerAddress(Empty) returns (ServerAddress);
 }
 
-// Servidores - Ingenieros/Comandante
 service Servers {
+    // Servidor - Ingeniero
     rpc WriteInfo(ActionRequest) returns (ClockResponse);
+    // Servidor - Comandante
     rpc ReadInfo(ReadRequest) returns (EnemiesResponse);
+    // Servidor - Servidor
+    rpc PropagateChanges(PropagationRequest) returns (PropagationResponse);
 }
 
 message Empty {}
@@ -38,4 +41,18 @@ message ReadRequest {
 message EnemiesResponse {
     int32 enemies = 1;
     repeated int32 clock = 2;
+}
+
+message VectorClocks {
+    string sector = 1;
+    repeated int32 clock = 2;
+}
+
+message PropagationRequest {
+    repeated string log = 1;
+    repeated VectorClocks clocks = 2;
+}
+
+message PropagationResponse {
+    bool success = 1;
 }

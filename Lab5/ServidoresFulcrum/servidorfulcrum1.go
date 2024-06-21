@@ -9,13 +9,14 @@ import (
 
 type FulcrumServer struct {
 	id          int32
-	log         []string
+	log         map[string][]string
 	vectorClock map[string][]int32
 }
 
 func newServer(id int32) *FulcrumServer {
 	return &FulcrumServer{
 		id:          id,
+		log:         make(map[string][]string),
 		vectorClock: make(map[string][]int32),
 	}
 }
@@ -36,7 +37,11 @@ func (s *FulcrumServer) registerAction(action string, sector string, base string
 			s.vectorClock[sector] = make([]int32, 3)
 		}
 		s.vectorClock[sector][s.id] += int32(1)
-		s.log = append(s.log, fmt.Sprintf("%s %s %s %s", action, sector, base, value))
+
+		if _, exists := s.log[sector]; !exists {
+			s.log[sector] = make([]string, 0)
+		}
+		s.log[sector] = append(s.log[sector], fmt.Sprintf("%s %s %s %s", action, sector, base, value))
 		return
 	}
 
@@ -69,11 +74,10 @@ func (s *FulcrumServer) registerAction(action string, sector string, base string
 	}
 
 	os.WriteFile(fmt.Sprintf("%s.txt", sector), []byte(strings.Join(lines, "\n")), 0644)
-	if _, exists := s.vectorClock[sector]; !exists {
-		s.vectorClock[sector] = make([]int32, 3)
-	}
+
+	// Asumo que ya existen
 	s.vectorClock[sector][s.id] += 1
-	s.log = append(s.log, fmt.Sprintf("%s %s %s %s", action, sector, base, value))
+	s.log[sector] = append(s.log[sector], fmt.Sprintf("%s %s %s %s", action, sector, base, value))
 }
 
 func main() {
