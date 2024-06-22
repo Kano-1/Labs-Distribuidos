@@ -19,14 +19,14 @@ service Servers {
 message Empty {}
 
 message ServerAddress {
-    string address = 1;
+    int32 address = 1;
 }
 
 message ActionRequest {
     string action = 1;
     string sector = 2;
     string base = 3;
-    int32 value = 4;
+    string value = 4;
 }
 
 message ClockResponse {

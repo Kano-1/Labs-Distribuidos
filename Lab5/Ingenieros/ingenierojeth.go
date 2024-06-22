@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	pb "Lab5/Proto"
 
@@ -14,7 +16,7 @@ import (
 type Engineer struct {
 	id            int32
 	data          map[string]map[string]int32
-	lastServer    map[string][]string
+	lastServer    map[string]int32
 	vectorClock   map[string][]int32
 	brokerClient  pb.BrokerClient
 	serverClients []pb.ServersClient
@@ -23,14 +25,14 @@ type Engineer struct {
 func newEngineer(id int32) *Engineer {
 	brokerConn, err := grpc.Dial("localhost:50050", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Fatalf("Could not connect to Broker Luna: %v", err)
 	}
 
 	var serverClients []pb.ServersClient
-	for _, addr := range []string{"localhost:50051", "localhost:50052", "localhost:50053"} {
+	for i, addr := range []string{"localhost:50051", "localhost:50052", "localhost:50053"} {
 		serverConn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
 		if err != nil {
-			log.Fatalf("did not connect to server: %v", err)
+			log.Fatalf("Could not connect to Server Fulcrum %d: %v", i, err)
 		}
 		serverClients = append(serverClients, pb.NewServersClient(serverConn))
 	}
@@ -38,14 +40,26 @@ func newEngineer(id int32) *Engineer {
 	return &Engineer{
 		id:            id,
 		data:          make(map[string]map[string]int32),
-		lastServer:    make(map[string][]string),
+		lastServer:    make(map[string]int32),
 		vectorClock:   make(map[string][]int32),
 		brokerClient:  pb.NewBrokerClient(brokerConn),
 		serverClients: serverClients,
 	}
 }
 
-func (e *Engineer) sendInformation(action string, sector string, base string, value string) {
+func (e *Engineer) SendMessageToBroker(message string) int32 {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	req := &pb.Empty{}
+	chosenServer, err := e.brokerClient.GetServerAddress(ctx, req)
+	if err != nil {
+		log.Fatalf("Could not send message to Broker Luna: %v", err)
+	}
+	return chosenServer.Address
+}
+
+func (e *Engineer) sendInformation(server int32, action string, sector string, base string, value string) {
 	switch action {
 	case "AgregarBase":
 		if _, exists := e.data[sector]; !exists {
@@ -64,7 +78,16 @@ func (e *Engineer) sendInformation(action string, sector string, base string, va
 	case "BorrarBase":
 		delete(e.data[sector], base)
 	}
-	// Envía el mensaje
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	clock, err := e.serverClients[server].WriteInfo(ctx, &pb.ActionRequest{Action: action, Sector: sector, Base: base, Value: value})
+	if err != nil {
+		log.Fatalf("Could not send message to Server Fulcrum %d: %v", server+1, err)
+	}
+
+	e.vectorClock[sector] = clock.Clock
+	e.lastServer[sector] = server
 }
 
 func (e *Engineer) consoleInterface() {
@@ -107,9 +130,14 @@ func (e *Engineer) consoleInterface() {
 		values = append(values, "")
 		action = "BorrarBase"
 	}
-	// llamo a la función
-	e.sendInformation(action, values[0], values[1], values[2])
 
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	chosenServer, err := e.brokerClient.GetServerAddress(ctx, &pb.Empty{})
+	if err != nil {
+		log.Fatalf("Could not send message to Broker Luna: %v", err)
+	}
+	e.sendInformation(chosenServer.Address, action, values[0], values[1], values[2])
 }
 
 func main() {
@@ -117,7 +145,4 @@ func main() {
 	for {
 		e.consoleInterface()
 	}
-	// e.data["Sector1"] = make(map[string]int32)
-	// e.data["Sector1"]["Base1"] = 10
-	// e.sendInformation("RenombrarBase", "Sector1", "Base1", "BaseAlpha")
 }

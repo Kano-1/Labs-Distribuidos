@@ -13,7 +13,7 @@
     - [ ] Realizar ***Merge*** si hay inconsistencias 
 
 ## Broker
-- [ ] Escoger un servidor al azar para el ingeniero haga sus cambios en él
+- [x] Escoger un servidor al azar para el ingeniero haga sus cambios en él
 - [ ] Escoger un servidor al azar para el comandante cuando quiera consultar información
 - [ ] Manejar las inconsistencias
     - Si el ingeniero detecta una, el broker debe decidir cuál es el mejor servidor que puede ayudar al ingeniero ?
@@ -24,13 +24,12 @@
     - [x] Renombrar una base de un sector
     - [x] Actualizar el valor de enemigos en una base
     - [x] Borrar una base de un sector
-- Falta unirlo con gRPC
 - [ ] Utilizar ***Read your writes*** para llevar a cabo la consistencia
     - Pueden guardar información en memoria
     - Revisan si hay inconsistencias con esto
 
 ## Comandante
-- [ ] Consultar la información de los servidores
+- [ ] Consultar por consola la información sobre un sector y base
     - [ ] Obtener la cantidad de enemigos en una base
         - Incluye el reloj de vector del servidor
 - [ ] Utilizar ***Monotonic reads*** para mantener la consistencia
@@ -49,10 +48,10 @@
 
 ## Mensajes gRPC
 **No sé si eso sería todo y como funciona bien lo de las inconsistencias :<**
-- [ ] Petición escribir información (ingeniero - broker)
-- [ ] Escribir información (ingeniero - servidor)
+- [x] Petición escribir información (ingeniero - broker)
+- [x] Escribir información (ingeniero - servidor)
 - [ ] Informar inconsistencia (ingeniero - broker)
-- [ ] Entregar dirección servidor (broker - ingeniero)
+- [x] Entregar dirección servidor (broker - ingeniero)
 ---
 - [ ] Informar inconsistencia (servidor - broker) ?
 - [ ] Propagar cambios (servidor - servidor)
