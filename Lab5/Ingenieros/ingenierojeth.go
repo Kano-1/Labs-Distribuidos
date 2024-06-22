@@ -2,24 +2,46 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
+	"strings"
+
+	pb "Lab5/Proto"
+
+	"google.golang.org/grpc"
 )
 
 type Engineer struct {
-	id          int
-	servers     []string
-	data        map[string]map[string]int32
-	lastServer  map[string][]string
-	vectorClock map[string][]int32
+	id            int32
+	data          map[string]map[string]int32
+	lastServer    map[string][]string
+	vectorClock   map[string][]int32
+	brokerClient  pb.BrokerClient
+	serverClients []pb.ServersClient
 }
 
-func newEngineer() *Engineer {
+func newEngineer(id int32) *Engineer {
+	brokerConn, err := grpc.Dial("localhost:50050", grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+
+	var serverClients []pb.ServersClient
+	for _, addr := range []string{"localhost:50051", "localhost:50052", "localhost:50053"} {
+		serverConn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
+		if err != nil {
+			log.Fatalf("did not connect to server: %v", err)
+		}
+		serverClients = append(serverClients, pb.NewServersClient(serverConn))
+	}
+
 	return &Engineer{
-		id:          1,
-		servers:     []string{"localhost:50051", "localhost:50052", "localhost:50053"},
-		data:        make(map[string]map[string]int32),
-		lastServer:  make(map[string][]string),
-		vectorClock: make(map[string][]int32),
+		id:            id,
+		data:          make(map[string]map[string]int32),
+		lastServer:    make(map[string][]string),
+		vectorClock:   make(map[string][]int32),
+		brokerClient:  pb.NewBrokerClient(brokerConn),
+		serverClients: serverClients,
 	}
 }
 
@@ -45,31 +67,57 @@ func (e *Engineer) sendInformation(action string, sector string, base string, va
 	// Envía el mensaje
 }
 
-func consoleInterface() {
+func (e *Engineer) consoleInterface() {
 	var option int32
+	var information, action string
+	var values []string
+
 	fmt.Println("Comandos posibles:")
-	fmt.Println("1. Agregar una base")
-	fmt.Println("2. Actualizar valor de una base")
-	fmt.Println("3. Renombrar una base")
-	fmt.Println("4. Borrar una base")
+	fmt.Println("1. Agregar una base\n2. Actualizar valor de una base\n3. Renombrar una base\n4. Borrar una base")
 	fmt.Printf("Seleccione una opción: ")
 	fmt.Scan(&option)
+
 	switch option {
 	case 1:
-		// agregar una base
+		// Agregar una base
+		fmt.Printf("Ingrese sector, base y enemigos siguiendo la forma \"<sector> <base> <enemigos>\": ")
+		fmt.Scan(&information)
+		values = strings.Split(information, " ")
+		action = "AgregarBase"
+
 	case 2:
-		// actaulizar valor de una base
+		// Actualizar valor de una base
+		fmt.Printf("Ingrese sector, base y cantidad actualizada siguiendo la forma \"<sector> <base> <cantidad_actualizada>\": ")
+		fmt.Scan(&information)
+		values = strings.Split(information, " ")
+		action = "ActualizarValor"
+
 	case 3:
-		// renombrar una base
+		// Renombrar una base
+		fmt.Printf("Ingrese sector, base y nuevo nombre siguiendo la forma \"<sector> <base> <nuevo_nombre>\": ")
+		fmt.Scan(&information)
+		values = strings.Split(information, " ")
+		action = "RenombrarBase"
+
 	case 4:
-		// borrar una base
+		// Borrar una base
+		fmt.Printf("Ingrese sector y base siguiendo la forma \"<sector> <base>\": ")
+		fmt.Scan(&information)
+		values = strings.Split(information, " ")
+		values = append(values, "")
+		action = "BorrarBase"
 	}
+	// llamo a la función
+	e.sendInformation(action, values[0], values[1], values[2])
+
 }
 
 func main() {
-	e := newEngineer()
-	consoleInterface()
-	e.data["Sector1"] = make(map[string]int32)
-	e.data["Sector1"]["Base1"] = 10
-	e.sendInformation("RenombrarBase", "Sector1", "Base1", "BaseAlpha")
+	e := newEngineer(0)
+	for {
+		e.consoleInterface()
+	}
+	// e.data["Sector1"] = make(map[string]int32)
+	// e.data["Sector1"]["Base1"] = 10
+	// e.sendInformation("RenombrarBase", "Sector1", "Base1", "BaseAlpha")
 }

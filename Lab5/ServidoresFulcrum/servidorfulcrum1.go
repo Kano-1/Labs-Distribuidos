@@ -3,21 +3,44 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
+
+	pb "Lab5/Proto"
+
+	"google.golang.org/grpc"
 )
 
 type FulcrumServer struct {
-	id          int32
-	log         map[string][]string
-	vectorClock map[string][]int32
+	id            int32
+	log           map[string][]string
+	vectorClock   map[string][]int32
+	brokerClient  pb.BrokerClient
+	serverClients []pb.ServersClient
 }
 
 func newServer(id int32) *FulcrumServer {
+	brokerConn, err := grpc.Dial("localhost:50050", grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+
+	var serverClients []pb.ServersClient
+	for _, addr := range []string{"localhost:50052", "localhost:50053"} {
+		serverConn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
+		if err != nil {
+			log.Fatalf("did not connect to server: %v", err)
+		}
+		serverClients = append(serverClients, pb.NewServersClient(serverConn))
+	}
+
 	return &FulcrumServer{
-		id:          id,
-		log:         make(map[string][]string),
-		vectorClock: make(map[string][]int32),
+		id:            id,
+		log:           make(map[string][]string),
+		vectorClock:   make(map[string][]int32),
+		brokerClient:  pb.NewBrokerClient(brokerConn),
+		serverClients: serverClients,
 	}
 }
 
