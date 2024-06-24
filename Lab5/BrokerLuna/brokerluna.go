@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	"net"
@@ -26,7 +27,12 @@ func newBroker() *BrokerLuna {
 	}
 }
 
-func (b *BrokerLuna) GetServerAddress(ctx context.Context, req *pb.Empty) (*pb.ServerAddress, error) {
+func (b *BrokerLuna) GetServerAddress(ctx context.Context, req *pb.AddressRequest) (*pb.ServerAddress, error) {
+	if req.Engineer {
+		fmt.Printf("Message received from Engineer %d\n", req.Id+1)
+	} else {
+		fmt.Printf("Message received from Commander\n")
+	}
 	chosenServer := int32(rand.Intn(3))
 	return &pb.ServerAddress{Address: chosenServer}, nil
 }

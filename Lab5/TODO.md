@@ -9,12 +9,12 @@
     - Ej: AgregarBase SectorAlpha Campamento2 13
     - Cuando se propagaron los cambios entre los servidores tienen que ser **borrados y creados** de nuevo ?
 - Técnicamente si está implementado todo eso, falta el que reciba la información con gRPC
-- [ ] Propagar los cambios cada 30 segundos
+- [x] Propagar los cambios cada 30 segundos
     - [ ] Realizar ***Merge*** si hay inconsistencias 
 
 ## Broker
 - [x] Escoger un servidor al azar para el ingeniero haga sus cambios en él
-- [ ] Escoger un servidor al azar para el comandante cuando quiera consultar información
+- [x] Escoger un servidor al azar para el comandante cuando quiera consultar información
 - [ ] Manejar las inconsistencias
     - Si el ingeniero detecta una, el broker debe decidir cuál es el mejor servidor que puede ayudar al ingeniero ?
 
@@ -55,7 +55,7 @@
 - [x] Entregar dirección servidor (broker - ingeniero)
 ---
 - [ ] Informar inconsistencia (servidor - broker) ?
-- [ ] Propagar cambios (servidor - servidor)
+- [x] Propagar cambios (servidor - servidor)
 ---
 - [x] Petición obtener información (comandante - broker)
 - [x] Consultar información (comandante - servidor)

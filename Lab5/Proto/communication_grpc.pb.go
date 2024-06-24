@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BrokerClient interface {
-	GetServerAddress(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ServerAddress, error)
+	GetServerAddress(ctx context.Context, in *AddressRequest, opts ...grpc.CallOption) (*ServerAddress, error)
 }
 
 type brokerClient struct {
@@ -37,7 +37,7 @@ func NewBrokerClient(cc grpc.ClientConnInterface) BrokerClient {
 	return &brokerClient{cc}
 }
 
-func (c *brokerClient) GetServerAddress(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ServerAddress, error) {
+func (c *brokerClient) GetServerAddress(ctx context.Context, in *AddressRequest, opts ...grpc.CallOption) (*ServerAddress, error) {
 	out := new(ServerAddress)
 	err := c.cc.Invoke(ctx, Broker_GetServerAddress_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -50,7 +50,7 @@ func (c *brokerClient) GetServerAddress(ctx context.Context, in *Empty, opts ...
 // All implementations must embed UnimplementedBrokerServer
 // for forward compatibility
 type BrokerServer interface {
-	GetServerAddress(context.Context, *Empty) (*ServerAddress, error)
+	GetServerAddress(context.Context, *AddressRequest) (*ServerAddress, error)
 	mustEmbedUnimplementedBrokerServer()
 }
 
@@ -58,7 +58,7 @@ type BrokerServer interface {
 type UnimplementedBrokerServer struct {
 }
 
-func (UnimplementedBrokerServer) GetServerAddress(context.Context, *Empty) (*ServerAddress, error) {
+func (UnimplementedBrokerServer) GetServerAddress(context.Context, *AddressRequest) (*ServerAddress, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerAddress not implemented")
 }
 func (UnimplementedBrokerServer) mustEmbedUnimplementedBrokerServer() {}
@@ -75,7 +75,7 @@ func RegisterBrokerServer(s grpc.ServiceRegistrar, srv BrokerServer) {
 }
 
 func _Broker_GetServerAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(AddressRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func _Broker_GetServerAddress_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: Broker_GetServerAddress_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BrokerServer).GetServerAddress(ctx, req.(*Empty))
+		return srv.(BrokerServer).GetServerAddress(ctx, req.(*AddressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

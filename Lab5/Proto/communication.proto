@@ -4,7 +4,7 @@ option go_package = "Lab5/Proto";
 
 // Broker - Ingenieros/Comandante
 service Broker {
-    rpc GetServerAddress(Empty) returns (ServerAddress);
+    rpc GetServerAddress(AddressRequest) returns (ServerAddress);
 }
 
 service Servers {
@@ -16,17 +16,21 @@ service Servers {
     rpc PropagateChanges(PropagationRequest) returns (PropagationResponse);
 }
 
-message Empty {}
+message AddressRequest {
+    int32 id = 1;
+    bool engineer = 2;
+}
 
 message ServerAddress {
     int32 address = 1;
 }
 
 message ActionRequest {
-    string action = 1;
-    string sector = 2;
-    string base = 3;
-    string value = 4;
+    int32 id = 1;
+    string action = 2;
+    string sector = 3;
+    string base = 4;
+    string value = 5;
 }
 
 message ClockResponse {
@@ -49,8 +53,9 @@ message VectorClocks {
 }
 
 message PropagationRequest {
-    repeated string log = 1;
-    repeated VectorClocks clocks = 2;
+    int32 id = 1;
+    repeated string log = 2;
+    repeated VectorClocks clocks = 3;
 }
 
 message PropagationResponse {

@@ -55,6 +55,8 @@ func (c *Commander) requestInformation(server int32, sector string, base string)
 		log.Fatalf("Could not send message to Server Fulcrum %d: %v", server+1, err)
 	}
 
+	fmt.Printf("Message received from Fulcrum Server %d: %d enemies, [%d, %d, %d]\n", server+1, res.Enemies, res.Clock[0], res.Clock[1], res.Clock[2])
+
 	c.data[sector][base] = res.Enemies
 	c.vectorClock[sector] = res.Clock
 	c.lastServer[sector] = server
@@ -66,23 +68,24 @@ func (c *Commander) consoleInterface() {
 	var values []string
 
 	fmt.Println("[Comandante Kais] Comandos posibles:")
-	fmt.Println("1. Preguntar cantidad de enemigos\n2. Salir")
+	fmt.Println("1. Preguntar cantidad de enemigos")
 	fmt.Printf("Seleccione una opción: ")
 	fmt.Scan(&option)
-	switch option {
-	case 1:
+	if option == 1 {
 		fmt.Printf("Ingrese sector y base siguiendo la forma \"<sector>-<base>\": ")
 		fmt.Scan(&information)
 		values = strings.Split(information, "-")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
-		chosenServer, err := c.brokerClient.GetServerAddress(ctx, &pb.Empty{})
+		res, err := c.brokerClient.GetServerAddress(ctx, &pb.AddressRequest{Id: 0, Engineer: false})
 		if err != nil {
 			log.Fatalf("Could not send message to Broker Luna: %v", err)
 		}
 
-		c.requestInformation(chosenServer.Address, values[0], values[1])
+		c.requestInformation(res.Address, values[0], values[1])
+	} else {
+		fmt.Println("Opción no válida")
 	}
 }
 
