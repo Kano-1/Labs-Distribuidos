@@ -47,18 +47,6 @@ func newEngineer(id int32) *Engineer {
 	}
 }
 
-func (e *Engineer) SendMessageToBroker(message string) int32 {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	req := &pb.Empty{}
-	chosenServer, err := e.brokerClient.GetServerAddress(ctx, req)
-	if err != nil {
-		log.Fatalf("Could not send message to Broker Luna: %v", err)
-	}
-	return chosenServer.Address
-}
-
 func (e *Engineer) sendInformation(server int32, action string, sector string, base string, value string) {
 	switch action {
 	case "AgregarBase":
@@ -95,7 +83,7 @@ func (e *Engineer) consoleInterface() {
 	var information, action string
 	var values []string
 
-	fmt.Println("Comandos posibles:")
+	fmt.Println("[Ingeniero Jeth] Comandos posibles:")
 	fmt.Println("1. Agregar una base\n2. Actualizar valor de una base\n3. Renombrar una base\n4. Borrar una base")
 	fmt.Printf("Seleccione una opción: ")
 	fmt.Scan(&option)
@@ -103,30 +91,34 @@ func (e *Engineer) consoleInterface() {
 	switch option {
 	case 1:
 		// Agregar una base
-		fmt.Printf("Ingrese sector, base y enemigos siguiendo la forma \"<sector> <base> <enemigos>\": ")
+		fmt.Printf("Ingrese sector, base y enemigos siguiendo la forma \"<sector>-<base>-<enemigos>\": ")
 		fmt.Scan(&information)
-		values = strings.Split(information, " ")
+		values = strings.Split(information, "-")
+		// Caso que no se entregue un número
+		if len(values) == 2 {
+			values = append(values, "0")
+		}
 		action = "AgregarBase"
 
 	case 2:
 		// Actualizar valor de una base
-		fmt.Printf("Ingrese sector, base y cantidad actualizada siguiendo la forma \"<sector> <base> <cantidad_actualizada>\": ")
+		fmt.Printf("Ingrese sector, base y cantidad actualizada siguiendo la forma \"<sector>-<base>-<cantidad_actualizada>\": ")
 		fmt.Scan(&information)
-		values = strings.Split(information, " ")
+		values = strings.Split(information, "-")
 		action = "ActualizarValor"
 
 	case 3:
 		// Renombrar una base
-		fmt.Printf("Ingrese sector, base y nuevo nombre siguiendo la forma \"<sector> <base> <nuevo_nombre>\": ")
+		fmt.Printf("Ingrese sector, base y nuevo nombre siguiendo la forma \"<sector>-<base>-<nuevo_nombre>\": ")
 		fmt.Scan(&information)
-		values = strings.Split(information, " ")
+		values = strings.Split(information, "-")
 		action = "RenombrarBase"
 
 	case 4:
 		// Borrar una base
-		fmt.Printf("Ingrese sector y base siguiendo la forma \"<sector> <base>\": ")
+		fmt.Printf("Ingrese sector y base siguiendo la forma \"<sector>-<base>\": ")
 		fmt.Scan(&information)
-		values = strings.Split(information, " ")
+		values = strings.Split(information, "-")
 		values = append(values, "")
 		action = "BorrarBase"
 	}

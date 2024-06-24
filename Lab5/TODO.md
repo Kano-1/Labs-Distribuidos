@@ -27,10 +27,11 @@
 - [ ] Utilizar ***Read your writes*** para llevar a cabo la consistencia
     - Pueden guardar información en memoria
     - Revisan si hay inconsistencias con esto
+    - Tiene que leer después que escribe ??
 
 ## Comandante
-- [ ] Consultar por consola la información sobre un sector y base
-    - [ ] Obtener la cantidad de enemigos en una base
+- [x] Consultar por consola la información sobre un sector y base
+    - [x] Obtener la cantidad de enemigos en una base
         - Incluye el reloj de vector del servidor
 - [ ] Utilizar ***Monotonic reads*** para mantener la consistencia
     - Pueden guardar información en memoria
@@ -56,10 +57,10 @@
 - [ ] Informar inconsistencia (servidor - broker) ?
 - [ ] Propagar cambios (servidor - servidor)
 ---
-- [ ] Petición obtener información (comandante - broker)
-- [ ] Consultar información (comandante - servidor)
-- [ ] Entregar dirección servidor (broker - comandante)
-- [ ] Entregar información (servidor - comandante)
+- [x] Petición obtener información (comandante - broker)
+- [x] Consultar información (comandante - servidor)
+- [x] Entregar dirección servidor (broker - comandante)
+- [x] Entregar información (servidor - comandante)
 
 ## Separación máquinas
 - 3 servidores en máquinas distintas

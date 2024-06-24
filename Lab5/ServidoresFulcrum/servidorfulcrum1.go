@@ -2,10 +2,15 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	pb "Lab5/Proto"
 
@@ -13,11 +18,13 @@ import (
 )
 
 type FulcrumServer struct {
+	pb.UnimplementedServersServer
 	id            int32
 	log           map[string][]string
 	vectorClock   map[string][]int32
 	brokerClient  pb.BrokerClient
 	serverClients []pb.ServersClient
+	mu            sync.Mutex
 }
 
 func newServer(id int32) *FulcrumServer {
@@ -42,6 +49,43 @@ func newServer(id int32) *FulcrumServer {
 		brokerClient:  pb.NewBrokerClient(brokerConn),
 		serverClients: serverClients,
 	}
+}
+
+func (s *FulcrumServer) WriteAction(ctx context.Context, req *pb.ActionRequest) (*pb.ClockResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	action, sector, base, value := req.Action, req.Sector, req.Base, req.Value
+	fmt.Printf("Se recibió el mensaje: %s %s %s %s\n", action, sector, base, value)
+	s.registerAction(action, sector, base, value)
+	return &pb.ClockResponse{Clock: s.vectorClock[sector]}, nil
+}
+
+func (s *FulcrumServer) ReadInfo(ctx context.Context, req *pb.ReadRequest) (*pb.EnemiesResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sector, base := req.Sector, req.Base
+	file, err := os.Open(fmt.Sprintf("%s.txt", sector))
+	if err != nil {
+		log.Fatalf("Error opening file: %v", err)
+	}
+	defer file.Close()
+
+	var enemies int32
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		l := scanner.Text()
+		if strings.Contains(l, base) {
+			line := strings.Split(l, " ")
+			if intValue, err := strconv.Atoi(line[2]); err == nil {
+				enemies = int32(intValue)
+			}
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("Error reading file: %v", err)
+	}
+	file.Close()
+	return &pb.EnemiesResponse{Enemies: enemies, Clock: s.vectorClock[sector]}, nil
 }
 
 func (s *FulcrumServer) registerAction(action string, sector string, base string, value string) {
@@ -112,19 +156,20 @@ func (s *FulcrumServer) registerAction(action string, sector string, base string
 func main() {
 	s := newServer(0)
 
-	s.registerAction("AgregarBase", "SectorAlpha", "Campamento1", "5")
-	s.registerAction("AgregarBase", "SectorBeta", "Campamento1", "6")
-	s.registerAction("AgregarBase", "SectorAlpha", "Campamento2", "10")
-	s.registerAction("AgregarBase", "SectorBeta", "Campamento2", "11")
-	s.registerAction("AgregarBase", "SectorBeta", "Campamento3", "1")
-	s.registerAction("AgregarBase", "SectorBeta", "Campamento4", "7")
-	s.registerAction("AgregarBase", "SectorAlpha", "Campamento3", "10")
-	s.registerAction("AgregarBase", "SectorAlpha", "Campamento4", "9")
-	s.registerAction("AgregarBase", "SectorAlpha", "Campamento5", "9")
-	s.registerAction("AgregarBase", "SectorBeta", "Campamento5", "8")
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
+	}
 
-	s.registerAction("ActualizarValor", "SectorAlpha", "Campamento3", "0")
-	s.registerAction("ActualizarValor", "SectorBeta", "Campamento2", "5")
-	s.registerAction("BorrarBase", "SectorAlpha", "Campamento4", "")
-	s.registerAction("RenombrarBase", "SectorBeta", "Campamento1", "Base1")
+	grpcServer := grpc.NewServer()
+	pb.RegisterServersServer(grpcServer, s)
+
+	log.Printf("Fulcrum Server %d is running on port 50051\n", s.id+1)
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
+	for {
+		// Propaga los cambios cada 30 segundos
+		time.Sleep(30 * time.Second)
+	}
 }
