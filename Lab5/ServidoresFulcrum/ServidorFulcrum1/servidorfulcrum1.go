@@ -240,6 +240,7 @@ func (s *FulcrumServer) startPropagation() {
 
 func main() {
 	s := newServer(0)
+	log.Printf("Fulcrum Server %d connected to Broker Luna\n", s.id+1)
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

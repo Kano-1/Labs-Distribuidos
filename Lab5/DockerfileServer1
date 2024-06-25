@@ -1,0 +1,15 @@
+FROM golang:latest
+
+WORKDIR /Lab5
+
+COPY ServidoresFulcrum/ServidorFulcrum1/servidorfulcrum1.go .
+COPY Proto/ Proto/
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod tidy
+RUN go build -o servidor1
+
+EXPOSE 50051
+
+CMD ["./servidor1"]
