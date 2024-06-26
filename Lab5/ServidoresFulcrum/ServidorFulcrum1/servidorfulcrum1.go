@@ -28,12 +28,10 @@ type FulcrumServer struct {
 }
 
 func newServer(id int32) *FulcrumServer {
-	log.Printf("Creating Fulcrum Server %d\n", id+1)
 	brokerConn, err := grpc.Dial("dist064.inf.santiago.usm.cl:50050", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
-	log.Printf("Fulcrum Server %d connected to Broker Luna\n", id+1)
 
 	return &FulcrumServer{
 		id:            id,

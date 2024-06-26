@@ -1,4 +1,4 @@
-.PHONY: broker server1 server2 server3
+.PHONY: broker server1 server2 server3 jeth malkor comandante
 
 broker:
 	docker build -t broker-go -f DockerfileBroker .
