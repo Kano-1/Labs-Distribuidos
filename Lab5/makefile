@@ -15,3 +15,15 @@ server2:
 server3:
 	docker build -t server3-go -f DockerfileServer3 .
 	docker run -it --name server3-go -p 50053:50053 server3-go
+
+jeth:
+	docker build -t jeth-go -f DockerfileJeth .
+	docker run -it --name jeth-go jeth-go
+
+malkor:
+	docker build -t malkor-go -f DockerfileMalkor .
+	docker run -it --name malkor-go malkor-go
+
+comandante:
+	docker build -t comandante-go -f DockerfileComandante .
+	docker run -it --name comandante-go comandante-go

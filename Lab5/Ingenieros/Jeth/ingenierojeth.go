@@ -23,13 +23,13 @@ type Engineer struct {
 }
 
 func newEngineer(id int32) *Engineer {
-	brokerConn, err := grpc.Dial("localhost:50050", grpc.WithInsecure(), grpc.WithBlock())
+	brokerConn, err := grpc.Dial("dist064.inf.santiago.usm.cl:50050", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Could not connect to Broker Luna: %v", err)
 	}
 
 	var serverClients []pb.ServersClient
-	for i, addr := range []string{"localhost:50051", "localhost:50052", "localhost:50053"} {
+	for i, addr := range []string{"dist061.inf.santiago.usm.cl:50051", "dist062.inf.santiago.usm.cl:50052", "dist063.inf.santiago.usm.cl:50053"} {
 		serverConn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
 		if err != nil {
 			log.Fatalf("Could not connect to Server Fulcrum %d: %v", i, err)

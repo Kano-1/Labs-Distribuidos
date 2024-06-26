@@ -28,10 +28,12 @@ type FulcrumServer struct {
 }
 
 func newServer(id int32) *FulcrumServer {
-	brokerConn, err := grpc.Dial("localhost:50050", grpc.WithInsecure(), grpc.WithBlock())
+	log.Printf("Creating Fulcrum Server %d\n", id+1)
+	brokerConn, err := grpc.Dial("dist064.inf.santiago.usm.cl:50050", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
+	log.Printf("Fulcrum Server %d connected to Broker Luna\n", id+1)
 
 	return &FulcrumServer{
 		id:            id,
@@ -43,7 +45,7 @@ func newServer(id int32) *FulcrumServer {
 }
 
 func (s *FulcrumServer) connectToServers() {
-	for i, addr := range []string{"localhost:50052", "localhost:50053"} {
+	for i, addr := range []string{"dist062.inf.santiago.usm.cl:50052", "dist063.inf.santiago.usm.cl:50053"} {
 		for {
 			serverConn, err := grpc.Dial(addr, grpc.WithInsecure())
 			if err != nil {
@@ -240,7 +242,6 @@ func (s *FulcrumServer) startPropagation() {
 
 func main() {
 	s := newServer(0)
-	log.Printf("Fulcrum Server %d connected to Broker Luna\n", s.id+1)
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

@@ -28,7 +28,7 @@ type FulcrumServer struct {
 }
 
 func newServer(id int32) *FulcrumServer {
-	brokerConn, err := grpc.Dial("localhost:50050", grpc.WithInsecure(), grpc.WithBlock())
+	brokerConn, err := grpc.Dial("dist064.inf.santiago.usm.cl:50050", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
 	}
@@ -43,7 +43,7 @@ func newServer(id int32) *FulcrumServer {
 }
 
 func (s *FulcrumServer) connectToServers() {
-	for i, addr := range []string{"localhost:50051", "localhost:50053"} {
+	for i, addr := range []string{"dist061.inf.santiago.usm.cl:50051", "dist063.inf.santiago.usm.cl:50053"} {
 		for {
 			serverConn, err := grpc.Dial(addr, grpc.WithInsecure())
 			if err != nil {
