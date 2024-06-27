@@ -14,14 +14,12 @@ import (
 
 type BrokerLuna struct {
 	pb.UnimplementedBrokerServer
-	servers     []string
 	vectorClock map[string][]int32
 	data        map[string]map[string]int32
 }
 
 func newBroker() *BrokerLuna {
 	return &BrokerLuna{
-		servers:     []string{"dist061.inf.santiago.usm.cl:50051", "dist062.inf.santiago.usm.cl:50052", "dist063.inf.santiago.usm.cl:50053"},
 		vectorClock: make(map[string][]int32),
 		data:        make(map[string]map[string]int32),
 	}
