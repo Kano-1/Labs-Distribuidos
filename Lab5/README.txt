@@ -27,7 +27,7 @@ Comentarios extras:
     - Se muestra la ejecución con make aunque no está instalado en las máquinas, pero corresponden a los comandos que se deberían usar para compilar cada entidad.
         - Se pide la contraseña de la máquina al ejecutar los comandos ya que no se puede hacer sin el modo sudo, pero estas no se incluyeron en el archivo.
     - Borramos los contenedores y las imágenes de las máquinas después de nuestras pruebas pero si da problemas porque ya existen se deben borrar ejecutando:
-        $ sudo docker image prune
         $ sudo docker container prune
+        $ sudo docker image prune
     - No se implementó por completo la consistencia entre los servidores, funciona relativamente bien pero intenten no ejecutar muchos comandos antes que se propaguen :<
         - Tampoco se implementaron los modelos de consistencias en los ingenieros y el comandante.
